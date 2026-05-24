@@ -2075,7 +2075,8 @@ def save_chat_message(
     If *message_id* is supplied (e.g. the id assigned by the frontend AI SDK)
     it is used as-is so that the client and DB stay in sync.  INSERT OR IGNORE
     means a duplicate id (e.g. from a retry) is silently skipped rather than
-    raising an IntegrityError.
+    raising an IntegrityError; the supplied message_id is returned regardless
+    of whether a new row was inserted.
     """
     import uuid
     mid = message_id or str(uuid.uuid4())

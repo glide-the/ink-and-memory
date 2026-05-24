@@ -250,7 +250,6 @@ class ClaudeAgentService:
         """Save user and assistant messages to the database after a successful turn."""
         import asyncio
         import database
-        import json as _json
 
         thread_id = execution.request.thread_id
         user_text = execution.request.message
@@ -259,7 +258,7 @@ class ClaudeAgentService:
         loop = asyncio.get_running_loop()
 
         def _save() -> None:
-            user_parts_json = _json.dumps([{"type": "text", "text": user_text}])
+            user_parts_json = json.dumps([{"type": "text", "text": user_text}])
             database.save_chat_message(
                 thread_id,
                 "user",
@@ -267,7 +266,7 @@ class ClaudeAgentService:
                 parts_json=user_parts_json,
                 message_id=user_message_id,
             )
-            assistant_parts_json = _json.dumps([{"type": "text", "text": assistant_text}])
+            assistant_parts_json = json.dumps([{"type": "text", "text": assistant_text}])
             database.save_chat_message(
                 thread_id,
                 "assistant",
