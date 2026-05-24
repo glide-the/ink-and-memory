@@ -2068,19 +2068,26 @@ def save_chat_message(
     role: str,
     content: str,
     parts_json: Optional[str] = None,
+    message_id: Optional[str] = None,
 ) -> str:
-    """Persist one chat message. Returns the new message_id."""
+    """Persist one chat message. Returns the message_id.
+
+    If *message_id* is supplied (e.g. the id assigned by the frontend AI SDK)
+    it is used as-is so that the client and DB stay in sync.  INSERT OR IGNORE
+    means a duplicate id (e.g. from a retry) is silently skipped rather than
+    raising an IntegrityError.
+    """
     import uuid
-    message_id = str(uuid.uuid4())
+    mid = message_id or str(uuid.uuid4())
     db = get_db()
     try:
         db.execute(
-            "INSERT INTO chat_message (id, thread_id, role, content, parts_json) VALUES (?, ?, ?, ?, ?)",
-            (message_id, thread_id, role, content, parts_json),
+            "INSERT OR IGNORE INTO chat_message (id, thread_id, role, content, parts_json) VALUES (?, ?, ?, ?, ?)",
+            (mid, thread_id, role, content, parts_json),
         )
         _touch_chat_thread(db, thread_id)
         db.commit()
-        return message_id
+        return mid
     finally:
         db.close()
 

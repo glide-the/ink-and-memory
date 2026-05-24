@@ -2201,6 +2201,13 @@ class ClaudeAgentRequestBody(BaseModel):
     def get_message_text(self) -> str:
         return _extract_message_text(self.message)
 
+    def get_message_id(self) -> Optional[str]:
+        """Return the frontend-assigned message id from a UIMessage dict, if present."""
+        if isinstance(self.message, dict):
+            msg_id = self.message.get("id")
+            return str(msg_id) if msg_id else None
+        return None
+
 
 class ToolConfirmRequestBody(BaseModel):
     thread_id: str
@@ -2240,6 +2247,7 @@ async def claude_agent_stream(
         user_id=str(user_id),
         thread_id=thread_id,
         message=message_text,
+        message_id=body.get_message_id(),
         resume=body.resume,
         tool_choice=body.tool_choice,
         model=body.model,

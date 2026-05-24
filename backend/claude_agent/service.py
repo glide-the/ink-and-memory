@@ -81,6 +81,7 @@ class ClaudeAgentRunRequest:
     user_id: str
     thread_id: str
     message: str
+    message_id: Optional[str] = None  # frontend-assigned UIMessage id
     resume: bool = False
     tool_choice: str = "auto"
     model: Optional[str] = None
@@ -249,15 +250,30 @@ class ClaudeAgentService:
         """Save user and assistant messages to the database after a successful turn."""
         import asyncio
         import database
+        import json as _json
 
         thread_id = execution.request.thread_id
         user_text = execution.request.message
+        user_message_id = execution.request.message_id
 
         loop = asyncio.get_running_loop()
 
         def _save() -> None:
-            database.save_chat_message(thread_id, "user", user_text)
-            database.save_chat_message(thread_id, "assistant", assistant_text)
+            user_parts_json = _json.dumps([{"type": "text", "text": user_text}])
+            database.save_chat_message(
+                thread_id,
+                "user",
+                user_text,
+                parts_json=user_parts_json,
+                message_id=user_message_id,
+            )
+            assistant_parts_json = _json.dumps([{"type": "text", "text": assistant_text}])
+            database.save_chat_message(
+                thread_id,
+                "assistant",
+                assistant_text,
+                parts_json=assistant_parts_json,
+            )
             # Auto-fill thread title from first user message if still NULL
             thread = database.get_chat_thread(thread_id, int(execution.request.user_id))
             if thread and not thread.get("title"):

@@ -181,12 +181,13 @@ export default function ChatPanel({
     if (hasInitializedRef.current) {
       return;
     }
-    if (!initialMessages) {
+    if (initialMessages === undefined) {
+      // Still loading — wait for the parent to supply history.
       return;
     }
-    if (initialMessages.length > 0) {
-      setMessages(initialMessages);
-    }
+    // Always call setMessages (even for an empty array) so that any stale
+    // entries held in the useChat internal cache are cleared.
+    setMessages(initialMessages);
     hasInitializedRef.current = true;
   }, [initialMessages, setMessages]);
 

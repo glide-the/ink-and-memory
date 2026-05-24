@@ -165,6 +165,11 @@ export default function ChatView({
   }, [onNewChat, reloadThreads]);
 
   const handleSelectThread = useCallback((threadId: string) => {
+    // Clear threadMessages synchronously so the remounting ChatPanel receives
+    // `initialMessages = undefined` (not the previous thread's messages).
+    // React 18 batches all these setState calls into one render.
+    setThreadMessages(null);
+    setIsLoadingMessages(true);
     setActiveThreadId(threadId);
     setHasConversationStarted(true);
     setThreadSidebarOpen(false);
@@ -178,6 +183,11 @@ export default function ChatView({
       setThreads(remaining);
       if (threadId === activeThreadId) {
         if (remaining.length > 0) {
+          // Clear stale messages synchronously before switching threads
+          setThreadMessages(null);
+          setIsLoadingMessages(true);
+          setQueuedPrompt('');
+          setQueuedAttachments([]);
           setActiveThreadId(remaining[0].id);
           setHasConversationStarted(true);
         } else {
