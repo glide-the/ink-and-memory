@@ -42,36 +42,14 @@ export default function DeckEditorModal({
   return (
     <div
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0,0,0,0.45)',
+        width: '100%',
+        height: '100%',
+        background: 'var(--color-bg-app)',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9998,
-        padding: 16,
-        boxSizing: 'border-box'
+        flexDirection: 'column',
+        overflow: 'hidden'
       }}
-      onClick={onClose}
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: 'min(1200px, 100%)',
-          height: '85vh',
-          maxHeight: '85vh',
-          background: 'var(--color-bg-app)',
-          borderRadius: 14,
-          overflow: 'hidden',
-          border: '2px solid var(--color-border-paper)',
-          boxShadow: '0 16px 36px rgba(0,0,0,0.25)',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -596,7 +574,6 @@ export default function DeckEditorModal({
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

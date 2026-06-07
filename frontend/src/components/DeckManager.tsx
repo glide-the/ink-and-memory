@@ -361,8 +361,24 @@ export default function DeckManager({ onUpdate, onOpenChat }: Props) {
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--color-bg-app)', overflow: 'hidden' }}>
-      {/* Scrollable Content with embedded header */}
-      <div ref={scrollContainerRef} style={{ flex: 1, overflowY: 'auto', padding: 'clamp(16px, 4vw, 32px)' }}>
+      {/* Inline Deck Editor — replaces the list when a deck is selected */}
+      {activeDeck ? (
+        <DeckEditorModal
+          deck={activeDeck}
+          isSystem={!!activeDeck.is_system}
+          selectedVoiceId={selectedVoiceByDeck[activeDeck.id] || activeDeck.voices?.[0]?.id || null}
+          onSelectVoice={(voiceId) => setSelectedVoiceByDeck(prev => ({ ...prev, [activeDeck.id]: voiceId }))}
+          onClose={() => setActiveDeckId(null)}
+          creatingVoiceId={creatingVoice}
+          onAddVoice={handleAddVoice}
+          onUpdateDeck={handleUpdateDeck}
+          onUpdateVoice={handleUpdateVoice}
+          onToggleVoice={handleToggleVoice}
+          onDeleteVoice={handleDeleteVoice}
+          onOpenChat={onOpenChat}
+        />
+      ) : (
+        <div ref={scrollContainerRef} style={{ flex: 1, overflowY: 'auto', padding: 'clamp(16px, 4vw, 32px)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* Embedded Header */}
           <div style={{
@@ -770,24 +786,7 @@ export default function DeckManager({ onUpdate, onOpenChat }: Props) {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Deck editor modal */}
-      {activeDeck && (
-        <DeckEditorModal
-          deck={activeDeck}
-          isSystem={!!activeDeck.is_system}
-          selectedVoiceId={selectedVoiceByDeck[activeDeck.id] || activeDeck.voices?.[0]?.id || null}
-          onSelectVoice={(voiceId) => setSelectedVoiceByDeck(prev => ({ ...prev, [activeDeck.id]: voiceId }))}
-          onClose={() => setActiveDeckId(null)}
-          creatingVoiceId={creatingVoice}
-          onAddVoice={handleAddVoice}
-          onUpdateDeck={handleUpdateDeck}
-          onUpdateVoice={handleUpdateVoice}
-          onToggleVoice={handleToggleVoice}
-          onDeleteVoice={handleDeleteVoice}
-          onOpenChat={onOpenChat}
-        />
+        </div>
       )}
 
       {/* @@@ Publish Warning Modal */}
