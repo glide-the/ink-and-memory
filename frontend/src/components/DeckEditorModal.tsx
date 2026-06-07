@@ -42,11 +42,10 @@ export default function DeckEditorModal({
   return (
     <div
       style={{
-        width: '100%',
-        height: '100%',
-        background: 'var(--color-bg-app)',
+        flex: 1,
         display: 'flex',
         flexDirection: 'column',
+        background: 'var(--color-bg-app)',
         overflow: 'hidden'
       }}
     >
